@@ -1,5 +1,4 @@
 import pygame as pg
-import math
 import numpy as np
 from pyautogui import alert
 
@@ -59,7 +58,8 @@ while True:
     screen.fill((0, 0, 0))
     for event in pg.event.get():
         if event.type == pg.QUIT:
-            alert("Your final Score is {}".format(score))
+            alert(text="Your final Score is {}".format(score),
+                  title="Quit Game")
             pg.quit()
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RIGHT or event.key == pg.K_d:
@@ -75,6 +75,9 @@ while True:
         ap = Apple()
         score += 1
         print("Score =", score)
+        if np.random.randint(0, 100) < 5:
+            alert(text="Never gonna give you up, Never gonna let you down",
+                  title="Rick Astley Sanjou!")
 
     head.move()
     ap.show(screen)
