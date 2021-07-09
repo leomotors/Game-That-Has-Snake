@@ -1,6 +1,7 @@
 import pygame as pg
 import math
 import numpy as np
+from pyautogui import alert
 
 pg.init()
 
@@ -58,6 +59,7 @@ while True:
     screen.fill((0, 0, 0))
     for event in pg.event.get():
         if event.type == pg.QUIT:
+            alert("Your final Score is {}".format(score))
             pg.quit()
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RIGHT or event.key == pg.K_d:
