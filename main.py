@@ -1,11 +1,13 @@
 import pygame as pg
 import math
+import numpy as np
 
 pg.init()
 
 FPS = 75
 
-screen = pg.display.set_mode((800, 600))
+SCREENRES = (800, 600)
+screen = pg.display.set_mode(SCREENRES)
 pg.display.set_caption("Game that have Snake 1.0 Snapshot")
 
 setfps = pg.time.Clock()
@@ -22,36 +24,59 @@ class Sprite:
         if self.direction == 0:
             self.x += self.v
         elif self.direction == 1:
-            self.y += self.v
+            self.y -= self.v
         elif self.direction == 2:
             self.x -= self.v
         elif self.direction == 3:
-            self.y -= self.v
+            self.y += self.v
         else:
             assert "What the f**k"
+
+        self.x = self.x % SCREENRES[0]
+        self.y = self.y % SCREENRES[1]
 
     def show(self, screen):
         pg.draw.rect(screen, (255, 255, 255), (self.x, self.y, 10, 10))
 
 
-head = Sprite(300, 300, 3, 0)
+class Apple(Sprite):
+    def __init__(self):
+        x = np.random.randint(0, SCREENRES[0])
+        y = np.random.randint(0, SCREENRES[1])
 
+        Sprite.__init__(self, x, y, 0, 0)
+
+    def show(self, screen):
+        pg.draw.rect(screen, (255, 0, 0), (self.x, self.y, 8, 8))
+
+
+head = Sprite(300, 300, 3, 0)
+ap = Apple()
+
+score = 0
 while True:
     screen.fill((0, 0, 0))
     for event in pg.event.get():
         if event.type == pg.QUIT:
             pg.quit()
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_RIGHT:
+            if event.key == pg.K_RIGHT or event.key == pg.K_d:
                 head.direction = 0
-            elif event.key == pg.K_UP:
+            elif event.key == pg.K_UP or event.key == pg.K_w:
                 head.direction = 1
-            elif event.key == pg.K_LEFT:
+            elif event.key == pg.K_LEFT or event.key == pg.K_a:
                 head.direction = 2
-            elif event.key == pg.K_DOWN:
+            elif event.key == pg.K_DOWN or event.key == pg.K_s:
                 head.direction = 3
 
+    if abs(head.x - ap.x) < 10 and abs(head.y - ap.y) < 10:
+        ap = Apple()
+        score += 1
+        print("Score =", score)
+
     head.move()
+    ap.show(screen)
     head.show(screen)
+
     pg.display.flip()
     setfps.tick(FPS)
