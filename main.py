@@ -14,6 +14,7 @@ screen = pg.display.set_mode(SCREENRES)
 pg.display.set_caption("Game that have Snake 1.0 Snapshot")
 setfps = pg.time.Clock()
 
+font = pg.font.Font("assets/fonts/Prompt-Regular.ttf", 24)
 
 class Sprite:
     def __init__(self, x, y, v, direction, size):
@@ -168,7 +169,7 @@ while True:
 
     if head.checkCollision():
         SendToHeaven()
-        alert("Your final score is {}".format(score))
+        alert(text="Your final score is {}".format(score), title="Game Over!")
         pg.quit()
 
     pg.display.flip()
