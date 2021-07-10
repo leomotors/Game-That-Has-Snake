@@ -1,3 +1,15 @@
 # Game that has Snake
 
-y e s
+My First Python GUI Project on pygame
+
+Made to practice my pygame skills, Nothing to expected here.
+
+## ⚙️ Dependencies
+
+* pygame
+
+* numpy
+
+* pyautogui
+
+* webbrowser
