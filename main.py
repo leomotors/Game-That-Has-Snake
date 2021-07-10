@@ -109,6 +109,20 @@ class SnakeCell(Sprite):
             self.next = SnakeCell(self.x+dx, self.y+dy,
                                   self.v, self.direction, self.size)
 
+    def checkCollision(self, tocheck=None):
+        if tocheck is None:
+            if self.next is None:
+                return False
+            return self.next.checkCollision(self)
+
+        if abs(self.x - tocheck.x) < 5 and abs(self.y - tocheck.y) < 5:
+            return True
+
+        if self.next is not None:
+            return self.next.checkCollision(tocheck)
+
+        return False
+
     def fixAlignment(self):
         if self.next is not None:
             if self.direction == self.next.direction:
@@ -146,11 +160,16 @@ while True:
     if abs(head.x - ap.x) < 10 and abs(head.y - ap.y) < 10:
         ap = Apple()
         score += 1
-        print("Score =", score)
+        #print("Score =", score)
         head.grow()
 
     ap.show(screen)
     head.update(screen)
+
+    if head.checkCollision():
+        SendToHeaven()
+        alert("Your final score is {}".format(score))
+        pg.quit()
 
     pg.display.flip()
     setfps.tick(TICK_RATE)
