@@ -1,2 +1,3 @@
-# Game-That-Have-Snake
-Game that have Snake
+# Game that has Snake
+
+y e s
