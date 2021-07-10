@@ -6,6 +6,7 @@ from utils.rickroll import SendToHeaven
 # * CONFIG
 TICK_RATE = 75
 SCREENRES = (800, 600)
+BORDER = 10
 
 # * SETUP
 pg.init()
@@ -44,8 +45,8 @@ class Sprite:
 
 class Apple(Sprite):
     def __init__(self):
-        x = np.random.randint(0, SCREENRES[0])
-        y = np.random.randint(0, SCREENRES[1])
+        x = np.random.randint(0, SCREENRES[0] - 2 * BORDER) + BORDER
+        y = np.random.randint(0, SCREENRES[1] - 2 * BORDER) + BORDER
 
         Sprite.__init__(self, x, y, 0, 0, 5)
 
@@ -160,7 +161,6 @@ while True:
     if abs(head.x - ap.x) < 10 and abs(head.y - ap.y) < 10:
         ap = Apple()
         score += 1
-        #print("Score =", score)
         head.grow()
 
     ap.show(screen)
