@@ -7,6 +7,10 @@ from utils.rickroll import SendToHeaven
 TICK_RATE = 75
 SCREENRES = (800, 600)
 BORDER = 10
+FONT_SIZE = 22
+SCORE_OFFSET = (16, 12)
+TIME_OFFSET = (16, SCORE_OFFSET[0] + FONT_SIZE + 6)
+
 
 # * SETUP
 pg.init()
@@ -14,7 +18,20 @@ screen = pg.display.set_mode(SCREENRES)
 pg.display.set_caption("Game that have Snake 1.0 Snapshot")
 setfps = pg.time.Clock()
 
-font = pg.font.Font("assets/fonts/Prompt-Regular.ttf", 24)
+font = pg.font.Font("assets/fonts/Prompt-Regular.ttf", FONT_SIZE)
+
+
+def showScore(score):
+    txtSprite = font.render("Current Score : " +
+                            str(score), True, (255, 255, 255))
+    screen.blit(txtSprite, SCORE_OFFSET)
+
+
+def showTime(tick):
+    txtSprite = font.render(
+        "Time Passed : " + "{:.1f}".format(tick/TICK_RATE), True, (255, 255, 255))
+    screen.blit(txtSprite, TIME_OFFSET)
+
 
 class Sprite:
     def __init__(self, x, y, v, direction, size):
@@ -141,6 +158,7 @@ ap = Apple()
 
 # * GAME LOOP
 score = 0
+tick_passed = 0
 while True:
     screen.fill((0, 0, 0))
     for event in pg.event.get():
@@ -166,6 +184,8 @@ while True:
 
     ap.show(screen)
     head.update(screen)
+    showScore(score)
+    showTime(tick_passed)
 
     if head.checkCollision():
         SendToHeaven()
@@ -173,4 +193,5 @@ while True:
         pg.quit()
 
     pg.display.flip()
+    tick_passed += 1
     setfps.tick(TICK_RATE)
