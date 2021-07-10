@@ -71,16 +71,19 @@ class SnakeCell(Sprite):
     def processOrder(self):
         lastorder = self.order[0]
         lastorder[1] -= self.v
+
         if lastorder[1] <= 0:
             self.changeDirection(lastorder[0])
             del self.order[0]
-    
+
     def update(self, screen):
         self.move()
         self.show(screen)
+        self.fixAlignment()
+
         if len(self.order) > 0:
             self.processOrder()
-        
+
         if self.next is not None:
             self.next.update(screen)
 
@@ -89,22 +92,32 @@ class SnakeCell(Sprite):
             self.next.grow()
         else:
             if self.direction == 0:
-                dx = self.size
+                dx = -self.size
                 dy = 0
             elif self.direction == 1:
                 dx = 0
-                dy = -self.size
+                dy = self.size
             elif self.direction == 2:
-                dx = -self.size
+                dx = self.size
                 dy = 0
             elif self.direction == 3:
                 dx = 0
-                dy = self.size
+                dy = -self.size
             else:
                 assert "Direction Error!"
 
             self.next = SnakeCell(self.x+dx, self.y+dy,
                                   self.v, self.direction, self.size)
+
+    def fixAlignment(self):
+        if self.next is not None:
+            if self.direction == self.next.direction:
+                if self.direction == 0 or self.direction == 2:
+                    if abs(self.y - self.next.y) < self.size/2:
+                        self.next.y = self.y
+                if self.direction == 1 or self.direction == 3:
+                    if abs(self.x - self.next.x) < self.size/2:
+                        self.next.x = self.x
 
 
 head = SnakeCell(300, 300, 2, 0, 10)
