@@ -32,7 +32,7 @@ class Sprite:
         elif self.direction == 3:
             self.y += self.v
         else:
-            assert "What the f**k"
+            assert "Direction Error!"
 
         self.x = self.x % SCREENRES[0]
         self.y = self.y % SCREENRES[1]
@@ -65,9 +65,22 @@ class SnakeCell(Sprite):
             return
         self.direction = direction
 
+        if self.next is not None:
+            self.next.order.append([direction, self.size])
+
+    def processOrder(self):
+        lastorder = self.order[0]
+        lastorder[1] -= self.v
+        if lastorder[1] <= 0:
+            self.changeDirection(lastorder[0])
+            del self.order[0]
+    
     def update(self, screen):
         self.move()
         self.show(screen)
+        if len(self.order) > 0:
+            self.processOrder()
+        
         if self.next is not None:
             self.next.update(screen)
 
@@ -75,11 +88,26 @@ class SnakeCell(Sprite):
         if self.next is not None:
             self.next.grow()
         else:
-            self.next = SnakeCell(self.x+10, self.y+10,
+            if self.direction == 0:
+                dx = self.size
+                dy = 0
+            elif self.direction == 1:
+                dx = 0
+                dy = -self.size
+            elif self.direction == 2:
+                dx = -self.size
+                dy = 0
+            elif self.direction == 3:
+                dx = 0
+                dy = self.size
+            else:
+                assert "Direction Error!"
+
+            self.next = SnakeCell(self.x+dx, self.y+dy,
                                   self.v, self.direction, self.size)
 
 
-head = SnakeCell(300, 300, 3, 0, 10)
+head = SnakeCell(300, 300, 2, 0, 10)
 ap = Apple()
 
 # * GAME LOOP
