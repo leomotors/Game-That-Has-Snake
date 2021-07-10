@@ -3,23 +3,23 @@ import numpy as np
 from pyautogui import alert
 from utils.rickroll import SendToHeaven
 
-pg.init()
-
-FPS = 75
-
+# * CONFIG
+TICK_RATE = 75
 SCREENRES = (800, 600)
+
+# * SETUP
+pg.init()
 screen = pg.display.set_mode(SCREENRES)
 pg.display.set_caption("Game that have Snake 1.0 Snapshot")
-
 setfps = pg.time.Clock()
 
-
 class Sprite:
-    def __init__(self, x, y, v, direction):
+    def __init__(self, x, y, v, direction, size):
         self.x = x
         self.y = y
         self.v = v
         self.direction = direction
+        self.size = size
 
     def move(self):
         if self.direction == 0:
@@ -37,7 +37,7 @@ class Sprite:
         self.y = self.y % SCREENRES[1]
 
     def show(self, screen):
-        pg.draw.rect(screen, (255, 255, 255), (self.x, self.y, 10, 10))
+        pg.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.size, self.size))
 
 
 class Apple(Sprite):
@@ -45,16 +45,16 @@ class Apple(Sprite):
         x = np.random.randint(0, SCREENRES[0])
         y = np.random.randint(0, SCREENRES[1])
 
-        Sprite.__init__(self, x, y, 0, 0)
+        Sprite.__init__(self, x, y, 0, 0, 5)
 
     def show(self, screen):
         pg.draw.rect(screen, (255, 0, 0), (self.x, self.y, 8, 8))
 
 
-head = Sprite(300, 300, 3, 0)
+head = Sprite(300, 300, 3, 0, 10)
 ap = Apple()
 
-
+# * GAME LOOP
 score = 0
 while True:
     screen.fill((0, 0, 0))
@@ -63,6 +63,7 @@ while True:
             alert(text="Your final Score is {}".format(score),
                   title="Quit Game")
             pg.quit()
+
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RIGHT or event.key == pg.K_d:
                 head.direction = 0
@@ -87,4 +88,4 @@ while True:
     head.show(screen)
 
     pg.display.flip()
-    setfps.tick(FPS)
+    setfps.tick(TICK_RATE)
