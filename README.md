@@ -12,8 +12,6 @@ Made to practice my pygame skills, *Nothing to expected here*.
 
 * pyautogui
 
-* webbrowser
-
 ## ⚒️ Configuration
 
 Config's Parameters can be modified
