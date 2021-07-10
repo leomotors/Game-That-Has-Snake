@@ -1,6 +1,7 @@
 import pygame as pg
 import numpy as np
 from pyautogui import alert
+from utils.rickroll import SendToHeaven
 
 pg.init()
 
@@ -53,6 +54,7 @@ class Apple(Sprite):
 head = Sprite(300, 300, 3, 0)
 ap = Apple()
 
+
 score = 0
 while True:
     screen.fill((0, 0, 0))
@@ -76,6 +78,7 @@ while True:
         score += 1
         print("Score =", score)
         if np.random.randint(0, 100) < 5:
+            SendToHeaven()
             alert(text="Never gonna give you up, Never gonna let you down",
                   title="Rick Astley Sanjou!")
 
