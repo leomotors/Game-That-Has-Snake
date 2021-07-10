@@ -11,6 +11,8 @@ FONT_SIZE = 22
 SCORE_OFFSET = (16, 12)
 TIME_OFFSET = (16, SCORE_OFFSET[0] + FONT_SIZE + 6)
 
+BACKGROUND_MUSIC = "Daydream café ~solo piano ver~"
+BG_MUSIC_LENGTH = 144
 
 # * SETUP
 pg.init()
@@ -19,6 +21,33 @@ pg.display.set_caption("Game that have Snake 1.0 Snapshot")
 setfps = pg.time.Clock()
 
 font = pg.font.Font("assets/fonts/Prompt-Regular.ttf", FONT_SIZE)
+
+
+class Music:
+    def __init__(self, song_name, song_length):
+        try:
+            self.music = pg.mixer.Sound(
+                "assets/musics/{}.wav".format(song_name))
+        except:
+            self.music = None
+            print("LOAD ERROR: Unable to Load Music")
+
+        self.song_length = song_length
+        self.playMusic()
+        self.next_play = song_length
+
+    def playMusic(self):
+        if self.music is not None:
+            self.music.play()
+
+    def CheckEnd(self, tick_passed):
+        if tick_passed / TICK_RATE >= self.next_play:
+            self.playMusic()
+            self.next_play += self.song_length
+
+
+bg_music = Music(BACKGROUND_MUSIC, BG_MUSIC_LENGTH)
+xp_fx = pg.mixer.Sound("assets/sounds/Minecraft XP Sound.wav")
 
 
 def showScore(score):
@@ -163,9 +192,11 @@ while True:
     screen.fill((0, 0, 0))
     for event in pg.event.get():
         if event.type == pg.QUIT:
-            alert(text="Your final Score is {}".format(score),
+            pg.mixer.stop()
+            alert(text="Your final Score is {}\nTime used : {:.1f}".format(score, (tick_passed/TICK_RATE)),
                   title="Quit Game")
             pg.quit()
+            break
 
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RIGHT or event.key == pg.K_d:
@@ -181,6 +212,7 @@ while True:
         ap = Apple()
         score += 1
         head.grow()
+        xp_fx.play()
 
     ap.show(screen)
     head.update(screen)
@@ -189,8 +221,13 @@ while True:
 
     if head.checkCollision():
         SendToHeaven()
-        alert(text="Your final score is {}".format(score), title="Game Over!")
+        pg.mixer.stop()
+        alert(text="Your final Score is {}\nTime used : {:.1f}".format(
+            score, (tick_passed/TICK_RATE)), title="Game Over!")
         pg.quit()
+        break
+
+    bg_music.CheckEnd(tick_passed)
 
     pg.display.flip()
     tick_passed += 1
