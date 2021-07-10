@@ -13,6 +13,7 @@ screen = pg.display.set_mode(SCREENRES)
 pg.display.set_caption("Game that have Snake 1.0 Snapshot")
 setfps = pg.time.Clock()
 
+
 class Sprite:
     def __init__(self, x, y, v, direction, size):
         self.x = x
@@ -37,7 +38,8 @@ class Sprite:
         self.y = self.y % SCREENRES[1]
 
     def show(self, screen):
-        pg.draw.rect(screen, (255, 255, 255), (self.x, self.y, self.size, self.size))
+        pg.draw.rect(screen, (255, 255, 255),
+                     (self.x, self.y, self.size, self.size))
 
 
 class Apple(Sprite):
@@ -51,7 +53,33 @@ class Apple(Sprite):
         pg.draw.rect(screen, (255, 0, 0), (self.x, self.y, 8, 8))
 
 
-head = Sprite(300, 300, 3, 0, 10)
+class SnakeCell(Sprite):
+    def __init__(self, x, y, v, direction, size, rank=0):
+        Sprite.__init__(self, x, y, v, direction, size)
+        self.rank = rank
+        self.next = None
+        self.order = []
+
+    def changeDirection(self, direction):
+        if self.direction == direction or (self.direction == 0 and direction == 2) or (self.direction == 1 and direction == 3) or (self.direction == 2 and direction == 0) or (self.direction == 3 and direction == 1):
+            return
+        self.direction = direction
+
+    def update(self, screen):
+        self.move()
+        self.show(screen)
+        if self.next is not None:
+            self.next.update(screen)
+
+    def grow(self):
+        if self.next is not None:
+            self.next.grow()
+        else:
+            self.next = SnakeCell(self.x+10, self.y+10,
+                                  self.v, self.direction, self.size)
+
+
+head = SnakeCell(300, 300, 3, 0, 10)
 ap = Apple()
 
 # * GAME LOOP
@@ -66,26 +94,22 @@ while True:
 
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_RIGHT or event.key == pg.K_d:
-                head.direction = 0
+                head.changeDirection(0)
             elif event.key == pg.K_UP or event.key == pg.K_w:
-                head.direction = 1
+                head.changeDirection(1)
             elif event.key == pg.K_LEFT or event.key == pg.K_a:
-                head.direction = 2
+                head.changeDirection(2)
             elif event.key == pg.K_DOWN or event.key == pg.K_s:
-                head.direction = 3
+                head.changeDirection(3)
 
     if abs(head.x - ap.x) < 10 and abs(head.y - ap.y) < 10:
         ap = Apple()
         score += 1
         print("Score =", score)
-        if np.random.randint(0, 100) < 5:
-            SendToHeaven()
-            alert(text="Never gonna give you up, Never gonna let you down",
-                  title="Rick Astley Sanjou!")
+        head.grow()
 
-    head.move()
     ap.show(screen)
-    head.show(screen)
+    head.update(screen)
 
     pg.display.flip()
     setfps.tick(TICK_RATE)
