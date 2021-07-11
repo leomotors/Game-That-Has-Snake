@@ -17,7 +17,7 @@ BG_MUSIC_LENGTH = 144
 # * SETUP
 pg.init()
 screen = pg.display.set_mode(SCREENRES)
-pg.display.set_caption("Game that have Snake 1.0 Snapshot")
+pg.display.set_caption("Game that have Snake 1.0")
 setfps = pg.time.Clock()
 
 font = pg.font.Font("assets/fonts/Prompt-Regular.ttf", FONT_SIZE)
